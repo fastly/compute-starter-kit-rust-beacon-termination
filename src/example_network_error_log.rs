@@ -13,7 +13,7 @@ use crate::report::Report;
 ///
 /// [reporting-api]: https://www.w3.org/TR/reporting-1/
 #[derive(Serialize, Deserialize, Clone)]
-impl NetworkErrorLogging for Report {
+impl NetworkErrorLog for Report {
     pub body: ReportBody,
 }
 
