@@ -1,1 +1,1 @@
-# fastly-template-beacon-termination
+# Compute@Edge starter kit for beacon termination

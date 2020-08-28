@@ -1,0 +1,5 @@
+version = 1
+name = "Compute@Edge starter kit for beacon termination"
+description = "Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure"
+authors = ["Dora Militaru <dmilitaru@fastly.com>"]
+language = "rust"
