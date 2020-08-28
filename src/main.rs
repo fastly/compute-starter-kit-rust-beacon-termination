@@ -45,8 +45,9 @@ fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
 fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
     let (parts, body) = req.into_parts();
 
-    // Parse the NEL reports from the request JSON body using serde_json.
-    // If successful, bind the reports to the `reports` variable, transform and log.
+    // Parse the beacon reports from the request JSON body using serde_json.
+    // If successful, bind the reports to the `reports` variable, 
+    // optionally transform and typecheck the payload, and log.
     if let Ok(reports) = serde_json::from_reader::<Body, Vec<Report>>(body) {
         // Extract information about the client from the downstream request,
         // such as the User-Agent and IP address.
@@ -63,6 +64,9 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
         // Generate a list of reports to be logged by mapping over each raw beacon
         // payload, merging it with the `ClientData` from above and transform it
         // to a `LogLine`.
+        // We assume that the input is an array, to allow the client to sent multiple
+        // reports at once. This is always the case for Network Error Logging.
+        // TODO: is this also the case for CSP?
         let logs: Vec<LogLine> = reports
             .into_iter()
             .map(|report| LogLine::new(report, client_data.clone()))
