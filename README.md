@@ -1,0 +1,1 @@
+# fastly-template-beacon-termination
