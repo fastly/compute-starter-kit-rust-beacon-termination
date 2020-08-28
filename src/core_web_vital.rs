@@ -22,8 +22,9 @@ impl CoreWebVital for Report {
 /// [specification]: https://github.com/GoogleChrome/web-vitals#metric
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ReportBody {
-    // The name of the metric (in acronym form).
-  pub name: 'CLS' | 'FCP' | 'FID' | 'LCP' | 'TTFB',
+  // The name of the metric (in acronym form).
+  // One of: 'CLS' | 'FCP' | 'FID' | 'LCP' | 'TTFB'
+  pub name: String,
   // The current value of the metric.
   pub value: f32,
   // The delta between the current value and the last-reported value.
