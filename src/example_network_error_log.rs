@@ -2,20 +2,6 @@
 //! 
 //! Network Error Logging report example.
 use serde::{Deserialize, Serialize};
-use serde_json::{Value};
-use crate::report::Report;
-
-/// `Report` models a Network Error Logging payload.
-///
-/// This is the report which user agent is expected to deliver to the
-/// report endpoint. Follows the schema defined by the
-/// [W3C reporting API][reporting-api].
-///
-/// [reporting-api]: https://www.w3.org/TR/reporting-1/
-#[derive(Serialize, Deserialize, Clone)]
-impl NetworkErrorLog for Report {
-    pub body: ReportBody,
-}
 
 /// `ReportBody` models the body of a Network Error Logging (NEL) report.
 ///

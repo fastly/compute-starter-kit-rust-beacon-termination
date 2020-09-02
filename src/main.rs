@@ -6,6 +6,12 @@ use fastly::http::{header, Method, StatusCode};
 use fastly::log::Endpoint;
 use fastly::{downstream_client_ip_addr, Body, Error, Request, Response, ResponseExt};
 use serde::{Deserialize, Serialize};
+use serde_json::value::Value as ReportBody;
+// The line above allows any valid JSON value in the report body.
+// Try type-checking a specific beacon payload by importing the `ReportBody`
+// data structure from one of the examples provided instead, e.g.:
+// mod example_network_error_log;
+// use crate::example_network_error_log::ReportBody;
 use std::io::Write;
 
 // Import the `Report` and `ClientData` data structures.
@@ -48,7 +54,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
     // Parse the beacon reports from the request JSON body using serde_json.
     // If successful, bind the reports to the `reports` variable, 
     // optionally transform and typecheck the payload, and log.
-    if let Ok(reports) = serde_json::from_reader::<Body, Vec<Report>>(body) {
+    if let Ok(reports) = serde_json::from_reader::<Body, Vec<Report<ReportBody>>>(body) {
         // Extract information about the client from the downstream request,
         // such as the User-Agent and IP address.
         let client_user_agent = parts
@@ -68,7 +74,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
         // reports at once. This is always the case for reports sent out-of-band
         // through the Reporting API, e.g., network errors, CSP violations, browser
         // interventions, and feature policy violations.
-        let logs: Vec<LogLine> = reports
+        let logs: Vec<LogLine<ReportBody>> = reports
             .into_iter()
             .map(|report| LogLine::new(report, client_data.clone()))
             .filter_map(Result::ok)
@@ -97,7 +103,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
 /// This is the data  structure that we serialize and emit to the logging
 /// endpoint.
 #[derive(Serialize, Deserialize)]
-pub struct LogLine {
+pub struct LogLine<T=ReportBody> {
     /// The log timestamp.
     ///
     /// A unix timestamp generated when we receive the report.
@@ -105,13 +111,14 @@ pub struct LogLine {
     // The GeoIP client data.
     client: ClientData,
     /// The sanitized report.
-    report: Report,
+    report: Report<T>,
 }
 
 impl LogLine {
     // Construct a new LogLine from a `Report` and `ClientData` and decorate
     // with a Unix timestamp.
-    pub fn new(report: Report, client: ClientData) -> Result<LogLine, Error> {
+    pub fn new<T>(report: Report<T>, client: ClientData) -> Result<LogLine<T>, Error> {
+        // 
         Ok(LogLine {
             timestamp: Utc::now().timestamp(),
             client,

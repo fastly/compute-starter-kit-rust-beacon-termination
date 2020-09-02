@@ -1,6 +1,7 @@
 //! Compute@Edge starter kit for beacon termination
+//!
+//! Generic JSON report example.
 use serde::{Deserialize, Serialize};
-use serde_json::{Value};
 
 /// `Report` models a beacon payload.
 ///
@@ -10,7 +11,7 @@ use serde_json::{Value};
 ///
 /// [reporting-api]: https://www.w3.org/TR/reporting-1/
 #[derive(Serialize, Deserialize, Clone)]
-pub struct Report {
+pub struct Report<T> {
     /// The report User Agent.
     ///
     /// The value of the User-Agent header string of the request from which
@@ -28,6 +29,6 @@ pub struct Report {
     /// The fields contained in a report's body are determined by the report's
     /// type. This generic structure uses an untyped JSON value.
     /// https://github.com/serde-rs/json#operating-on-untyped-json-values
-    pub body: Value,
+    pub body: T,
     pub age: i64,
 }
