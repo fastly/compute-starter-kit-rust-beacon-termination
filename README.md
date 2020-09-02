@@ -16,6 +16,7 @@ Beacons are HTTP requests, usually `POST`s, sent from a web browser to record so
 * Deserializes individual reports from JSON to Rust data structures, with optional type-checking (see [Payload examples](#payload-examples));
 * Enriches information at the edge, such as geo IP data;
 * Sends reports to a logging endpoint as individual JSON lines;
+    N.B.: Depending on which [logging endpoint type](https://developer.fastly.com/reference/api/logging/) is chosen, these lines may be batched.
 * Responds with a synthetic 204.
 
 ### Payload examples
