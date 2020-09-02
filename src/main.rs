@@ -65,8 +65,9 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
         // payload, merging it with the `ClientData` from above and transform it
         // to a `LogLine`.
         // We assume that the input is an array, to allow the client to sent multiple
-        // reports at once. This is always the case for Network Error Logging.
-        // TODO: is this also the case for CSP?
+        // reports at once. This is always the case for reports sent out-of-band
+        // through the Reporting API, e.g., network errors, CSP violations, browser
+        // interventions, and feature policy violations.
         let logs: Vec<LogLine> = reports
             .into_iter()
             .map(|report| LogLine::new(report, client_data.clone()))
