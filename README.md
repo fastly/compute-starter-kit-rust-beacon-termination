@@ -18,7 +18,7 @@ Beacons are HTTP requests, usually `POST`s, sent from a web browser to record so
 * Sends reports to a logging endpoint as individual JSON lines;
 * Sends a synthetic 204 response to the client.
 
-### Additional payload examples
+### Payload examples
 
 This starter kit allows an individual report to be any valid JSON value.
 
