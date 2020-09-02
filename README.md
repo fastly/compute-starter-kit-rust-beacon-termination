@@ -14,9 +14,9 @@ Beacons are HTTP requests, usually `POST`s, sent from a web browser to record so
 
 * Exposes a `POST /reports` endpoint to receive beacon reports (in batches);
 * Deserializes individual reports from JSON to Rust data structures, with optional type-checking (see [Payload examples](#payload-examples));
-* Adds additional information at the edge, such as geo IP data;
+* Enriches information at the edge, such as geo IP data;
 * Sends reports to a logging endpoint as individual JSON lines;
-* Sends a synthetic 204 response to the client.
+* Responds with a synthetic 204.
 
 ### Payload examples
 
