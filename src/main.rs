@@ -106,7 +106,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
 pub struct LogLine<T=ReportBody> {
     /// The log timestamp.
     ///
-    /// A unix timestamp generated when we receive the report.
+    /// A Unix timestamp generated when we receive the report.
     timestamp: i64,
     // The GeoIP client data.
     client: ClientData,
