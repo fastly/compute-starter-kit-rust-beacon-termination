@@ -100,7 +100,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
 
 /// `LogLine` models the structure of a log line.
 ///
-/// This is the data  structure that we serialize and emit to the logging
+/// This is the data structure that we serialize and emit to the logging
 /// endpoint.
 #[derive(Serialize, Deserialize)]
 pub struct LogLine<T=ReportBody> {
