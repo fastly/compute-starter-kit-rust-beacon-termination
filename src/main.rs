@@ -100,13 +100,13 @@ fn handle_reports(req: Request<Body>) -> Result<(), Error> {
 
 /// `LogLine` models the structure of a log line.
 ///
-/// This is the data  structure that we serialize and emit to the logging
+/// This is the data structure that we serialize and emit to the logging
 /// endpoint.
 #[derive(Serialize, Deserialize)]
 pub struct LogLine<T=ReportBody> {
     /// The log timestamp.
     ///
-    /// A unix timestamp generated when we receive the report.
+    /// A Unix timestamp generated when we receive the report.
     timestamp: i64,
     // The GeoIP client data.
     client: ClientData,
