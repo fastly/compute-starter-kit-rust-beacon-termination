@@ -33,7 +33,11 @@ fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
         // If a CORS preflight OPTIONS request return a 204 no content.
         (&Method::OPTIONS, "/report") => generate_no_content_response(),
         // If a POST request pass to the `handler_reports` request handler.
-        (&Method::POST, "/report") => handle_reports(req),
+        (&Method::POST, "/report") => {
+            let _ = handle_reports(req);
+            // Return an empty 204 No Content response to the downstream client.
+            generate_no_content_response()
+        },
         // For all other requests return a 404 not found.
         _ => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
@@ -45,57 +49,53 @@ fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
 ///
 /// It attempts to extract the beacon reports from the POST request body and maps
 /// over each report adding additional information before emitting a log line
-/// to the `reports` logging endpoint if valid. It always returns a synthetic
-/// `204 No content` response, regardless of whether the log reporting was
-/// successful.
-fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
+/// to the `reports` logging endpoint if valid.
+fn handle_reports(req: Request<Body>) -> Result<(), Error> {
     let (parts, body) = req.into_parts();
 
     // Parse the beacon reports from the request JSON body using serde_json.
     // If successful, bind the reports to the `reports` variable, 
     // optionally transform and typecheck the payload, and log.
-    if let Ok(reports) = serde_json::from_reader::<Body, Vec<Report<ReportBody>>>(body) {
-        // Extract information about the client from the downstream request,
-        // such as the User-Agent and IP address.
-        let client_user_agent = parts
-            .headers
-            .get(header::USER_AGENT)
-            .and_then(|header| header.to_str().ok())
-            .unwrap_or("");
-        let client_ip = downstream_client_ip_addr().expect("should have client IP");
+    let reports = serde_json::from_reader::<Body, Vec<Report<ReportBody>>>(body)?;
 
-        // Construct a new `ClientData` structure from the IP and User Agent.
-        let client_data = ClientData::new(client_ip, client_user_agent)?;
+    // Extract information about the client from the downstream request,
+    // such as the User-Agent and IP address.
+    let client_user_agent = parts
+        .headers
+        .get(header::USER_AGENT)
+        .and_then(|header| header.to_str().ok())
+        .unwrap_or("");
+    let client_ip = downstream_client_ip_addr().expect("should have client IP");
 
-        // Generate a list of reports to be logged by mapping over each raw beacon
-        // payload, merging it with the `ClientData` from above and transform it
-        // to a `LogLine`.
-        // We assume that the input is an array, to allow the client to sent multiple
-        // reports at once. This is always the case for reports sent out-of-band
-        // through the Reporting API, e.g., network errors, CSP violations, browser
-        // interventions, and feature policy violations.
-        let logs: Vec<LogLine<ReportBody>> = reports
-            .into_iter()
-            .map(|report| LogLine::new(report, client_data.clone()))
-            .filter_map(Result::ok)
-            .collect();
+    // Construct a new `ClientData` structure from the IP and User Agent.
+    let client_data = ClientData::new(client_ip, client_user_agent)?;
 
-        // Create a handle to the upstream logging endpoint that we want to emit
-        // the reports to.
-        let mut endpoint = Endpoint::from_name("reports");
+    // Generate a list of reports to be logged by mapping over each raw beacon
+    // payload, merging it with the `ClientData` from above and transform it
+    // to a `LogLine`.
+    // We assume that the input is an array, to allow the client to sent multiple
+    // reports at once. This is always the case for reports sent out-of-band
+    // through the Reporting API, e.g., network errors, CSP violations, browser
+    // interventions, and feature policy violations.
+    let logs: Vec<LogLine<ReportBody>> = reports
+        .into_iter()
+        .map(|report| LogLine::new(report, client_data.clone()))
+        .filter_map(Result::ok)
+        .collect();
 
-        // Loop over each log line serializing it back to JSON and write it to
-        // the logging endpoint.
-        for log in logs.iter() {
-            if let Ok(json) = serde_json::to_string(&log) {
-                writeln!(endpoint, "{}", json)?;
-            }
+    // Create a handle to the upstream logging endpoint that we want to emit
+    // the reports to.
+    let mut endpoint = Endpoint::from_name("reports");
+
+    // Loop over each log line serializing it back to JSON and write it to
+    // the logging endpoint.
+    for log in logs.iter() {
+        if let Ok(json) = serde_json::to_string(&log) {
+            writeln!(endpoint, "{}", json)?;
         }
     };
-
-    // Return and empty 204 no content response to the downstream client,
-    // regardless of successful logging.
-    generate_no_content_response()
+    
+    Ok(())
 }
 
 /// `LogLine` models the structure of a log line.
