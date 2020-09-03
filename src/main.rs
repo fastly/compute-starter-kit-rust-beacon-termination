@@ -93,7 +93,7 @@ fn handle_reports(req: Request<Body>) -> Result<Response<Body>, Error> {
         }
     };
 
-    // Return and empty 204 no content response to the downstream client,
+    // Return an empty 204 no content response to the downstream client,
     // regardless of successful logging.
     generate_no_content_response()
 }
