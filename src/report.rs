@@ -1,5 +1,3 @@
-//! Compute@Edge starter kit for beacon termination
-//!
 //! Generic JSON report example.
 use serde::{Deserialize, Serialize};
 

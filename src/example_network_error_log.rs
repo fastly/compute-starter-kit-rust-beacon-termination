@@ -1,5 +1,3 @@
-//! Compute@Edge starter kit for beacon termination
-//! 
 //! Network Error Logging report example.
 use serde::{Deserialize, Serialize};
 
