@@ -1,25 +1,28 @@
 //! Compute@Edge starter kit for beacon termination
 //!
 //! A Compute@Edge service which exposes a HTTP reporting endpoint for beacon termination.
+
+mod client_data;
+mod example_core_web_vital;
+mod example_csp_violation;
+mod example_network_error_log;
+mod report;
+
+use crate::client_data::ClientData;
+use crate::report::Report;
 use chrono::Utc;
 use fastly::http::{header, Method, StatusCode};
 use fastly::log::Endpoint;
 use fastly::{downstream_client_ip_addr, Body, Error, Request, Response, ResponseExt};
 use serde::{Deserialize, Serialize};
-use serde_json::value::Value as ReportBody;
-// The line above allows any valid JSON value in the report body.
+use std::io::Write;
+
+// This line allows any valid JSON value in the report body.
 // Try type-checking a specific beacon payload by importing the `ReportBody`
 // data structure from one of the examples provided instead, e.g.:
 // mod example_network_error_log;
 // use crate::example_network_error_log::ReportBody;
-use std::io::Write;
-
-// Import the `Report` and `ClientData` data structures.
-mod client_data;
-mod report;
-
-use crate::client_data::ClientData;
-use crate::report::Report;
+use serde_json::value::Value as ReportBody;
 
 /// Main application entrypoint.
 ///
