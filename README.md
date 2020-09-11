@@ -1,6 +1,6 @@
 # Compute@Edge starter kit for beacon termination
 
-A Rust based Compute@Edge starter kit for a [beacon](https://developer.mozilla.org/en-US/docs/Web/API/Beacon_API/) reporting endpoint.
+A Rust based Compute@Edge starter kit for a beacon reporting endpoint.
 
 **For more details about this and other starter kits for Compute@Edge, see the [Fastly developer hub](https://developer.fastly.com/solutions/starters)**.
 
