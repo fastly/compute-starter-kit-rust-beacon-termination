@@ -93,9 +93,7 @@ fn handle_reports(req: Request<Body>) -> Result<(), Error> {
     // Loop over each log line serializing it back to JSON and write it to
     // the logging endpoint.
     for log in logs.iter() {
-        if let Ok(json) = serde_json::to_string(&log) {
-            writeln!(endpoint, "{}", json)?;
-        }
+        serde_json::to_writer(&mut endpoint, &log)?;
     }
 
     Ok(())
