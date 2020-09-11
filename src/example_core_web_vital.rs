@@ -1,5 +1,3 @@
-//! Compute@Edge starter kit for beacon termination
-//!
 //! Core Web Vital report example.
 use serde::{Deserialize, Serialize};
 use serde_json::value::Value;
@@ -9,11 +7,11 @@ use serde_json::value::Value;
 /// [specification]: https://github.com/GoogleChrome/web-vitals#metric
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ReportBody {
-  pub name: String,
-  pub value: f32,
-  pub delta: f32,
-  pub id: String,
-  #[serde(rename = "isFinal")]
-  pub is_final: bool,
-  pub entries: Value,
+    pub name: String,
+    pub value: f32,
+    pub delta: f32,
+    pub id: String,
+    #[serde(rename = "isFinal")]
+    pub is_final: bool,
+    pub entries: Value,
 }

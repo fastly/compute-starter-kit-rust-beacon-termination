@@ -1,25 +1,28 @@
 //! Compute@Edge starter kit for beacon termination
 //!
 //! A Compute@Edge service which exposes a HTTP reporting endpoint for beacon termination.
+
+mod client_data;
+mod example_core_web_vital;
+mod example_csp_violation;
+mod example_network_error_log;
+mod report;
+
+use crate::client_data::ClientData;
+use crate::report::Report;
 use chrono::Utc;
 use fastly::http::{header, Method, StatusCode};
 use fastly::log::Endpoint;
 use fastly::{downstream_client_ip_addr, Body, Error, Request, Response, ResponseExt};
 use serde::{Deserialize, Serialize};
-use serde_json::value::Value as ReportBody;
-// The line above allows any valid JSON value in the report body.
+use std::io::Write;
+
+// This line allows any valid JSON value in the report body.
 // Try type-checking a specific beacon payload by importing the `ReportBody`
 // data structure from one of the examples provided instead, e.g.:
 // mod example_network_error_log;
 // use crate::example_network_error_log::ReportBody;
-use std::io::Write;
-
-// Import the `Report` and `ClientData` data structures.
-mod client_data;
-mod report;
-
-use crate::client_data::ClientData;
-use crate::report::Report;
+use serde_json::value::Value as ReportBody;
 
 /// Main application entrypoint.
 ///
@@ -37,7 +40,7 @@ fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
             let _ = handle_reports(req);
             // Return an empty 204 No Content response to the downstream client.
             generate_no_content_response()
-        },
+        }
         // For all other requests return a 404 not found.
         _ => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
@@ -54,7 +57,7 @@ fn handle_reports(req: Request<Body>) -> Result<(), Error> {
     let (parts, body) = req.into_parts();
 
     // Parse the beacon reports from the request JSON body using serde_json.
-    // If successful, bind the reports to the `reports` variable, 
+    // If successful, bind the reports to the `reports` variable,
     // optionally transform and typecheck the payload, and log.
     let reports = serde_json::from_reader::<Body, Vec<Report<ReportBody>>>(body)?;
 
@@ -93,8 +96,8 @@ fn handle_reports(req: Request<Body>) -> Result<(), Error> {
         if let Ok(json) = serde_json::to_string(&log) {
             writeln!(endpoint, "{}", json)?;
         }
-    };
-    
+    }
+
     Ok(())
 }
 
@@ -103,12 +106,12 @@ fn handle_reports(req: Request<Body>) -> Result<(), Error> {
 /// This is the data structure that we serialize and emit to the logging
 /// endpoint.
 #[derive(Serialize, Deserialize)]
-pub struct LogLine<T=ReportBody> {
+pub struct LogLine<T = ReportBody> {
     /// The log timestamp.
     ///
     /// A Unix timestamp generated when we receive the report.
     timestamp: i64,
-    // The GeoIP client data.
+    /// The GeoIP client data.
     client: ClientData,
     /// The sanitized report.
     report: Report<T>,
@@ -118,7 +121,6 @@ impl LogLine {
     // Construct a new LogLine from a `Report` and `ClientData` and decorate
     // with a Unix timestamp.
     pub fn new<T>(report: Report<T>, client: ClientData) -> Result<LogLine<T>, Error> {
-        // 
         Ok(LogLine {
             timestamp: Utc::now().timestamp(),
             client,
