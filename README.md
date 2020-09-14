@@ -2,8 +2,6 @@
 
 A Rust based Compute@Edge starter kit for a beacon reporting endpoint.
 
-![Illustrative example of beacon termination at Fastly's edge](https://developer.fastly.com/static/4a41486718da0121de252b467f01d7da/flow.png)
-
 **For more details about this and other starter kits for Compute@Edge, see the [Fastly developer hub](https://developer.fastly.com/solutions/starters)**.
 
 ## What are beacons?
