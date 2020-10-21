@@ -15,7 +15,6 @@ use fastly::http::{header, Method, StatusCode};
 use fastly::log::Endpoint;
 use fastly::{downstream_client_ip_addr, Body, Error, Request, Response, ResponseExt};
 use serde::{Deserialize, Serialize};
-use std::io::Write;
 
 // This line allows any valid JSON value in the report body.
 // Try type-checking a specific beacon payload by importing the `ReportBody`
