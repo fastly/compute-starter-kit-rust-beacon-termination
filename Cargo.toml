@@ -1,5 +1,5 @@
 [package]
-name = "beacon-termination"
+name = "compute-starter-kit-rust-beacon-termination"
 version = "0.1.0"
 authors = ["Dora Militaru <dmilitaru@fastly.com>"]
 edition = "2018"
