@@ -8,7 +8,7 @@ A Rust based Compute@Edge starter kit for a beacon reporting endpoint.
 
 Beacons are HTTP requests, usually `POST`s, sent from a web browser to record some analytics data. Browsers offer native support for beacons via the `navigator.sendBeacon` method, and via the [Reporting API](https://developers.google.com/web/updates/2018/09/reportingapi) for out-of-band reports on browser-generated warnings like CSP and feature policy violations, deprecations, browser interventions, and network errors. Native apps will also often send beacon data back to base.
 
-**For an in-depth guide to beacon termination using VCL, see the [Beacon Termination tutorial](https://developer.fastly.com/solutions/tutorial/beacon-termination) on Fastly's developer hub**.
+**For an in-depth guide to beacon termination using VCL, see the [Beacon Termination tutorial](https://developer.fastly.com/solutions/tutorials/beacon-termination) on Fastly's developer hub**.
 
 ## Features
 
