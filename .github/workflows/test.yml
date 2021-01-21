@@ -40,15 +40,6 @@ jobs:
     - name: Install audit
       run: cargo install cargo-audit
       shell: bash
-    - name: fmt
-      run: cargo fmt
-      shell: bash
-    - name: clippy
-      run: cargo clippy
-      shell: bash
-    - name: audit
-      run: cargo audit
-      shell: bash
-    - name: build
-      run: cargo build
+    - name: test
+      run: make fmt verify audit test
       shell: bash
