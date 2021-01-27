@@ -1,7 +1,7 @@
-//! Compute@Edge starter kit for beacon termination
 use fastly::error::anyhow;
+use fastly::experimental::uap_parse;
 use fastly::geo::{geo_lookup, Continent};
-use fastly::{uap_parse, Error};
+use fastly::Error;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::net::IpAddr;
@@ -29,22 +29,19 @@ impl ClientData {
     pub fn new(client_ip: IpAddr, client_user_agent: &str) -> Result<ClientData, Error> {
         // First, truncate the IP to a privacy safe prefix.
         let truncated_ip = truncate_ip_to_prefix(client_ip)?;
-        // Lookup the geo IP data from the client IP. If no match return an
-        // error.
-        match geo_lookup(client_ip) {
-            Some(geo) => Ok(ClientData {
-                client_ip: truncated_ip,
-                client_user_agent: UserAgent::from_str(client_user_agent)?.to_string(), // Parse the User-Agent string to family, major, minor, patch.
-                client_asn: geo.as_number(),
-                client_asname: geo.as_name().to_string(),
-                client_city: geo.city().to_string(),
-                client_country_code: geo.country_code().to_string(),
-                client_latitude: geo.latitude(),
-                client_longitude: geo.longitude(),
-                client_continent_code: geo.continent(),
-            }),
-            None => Err(anyhow!("Unable to lookup geo IP data")),
-        }
+        // Lookup the geo IP data from the client IP. If no match return an error.
+        let geo = geo_lookup(client_ip).ok_or_else(|| anyhow!("No geographic data available"))?;
+        Ok(ClientData {
+            client_ip: truncated_ip,
+            client_user_agent: UserAgent::from_str(client_user_agent)?.to_string(), // Parse the User-Agent string.
+            client_asn: geo.as_number(),
+            client_asname: geo.as_name().to_string(),
+            client_city: geo.city().to_string(),
+            client_country_code: geo.country_code().to_string(),
+            client_latitude: geo.latitude(),
+            client_longitude: geo.longitude(),
+            client_continent_code: geo.continent(),
+        })
     }
 }
 

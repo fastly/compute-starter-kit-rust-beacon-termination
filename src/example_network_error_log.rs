@@ -1,4 +1,3 @@
-//! Network Error Logging report example.
 use serde::{Deserialize, Serialize};
 
 /// `ReportBody` models the body of a Network Error Logging (NEL) report.
