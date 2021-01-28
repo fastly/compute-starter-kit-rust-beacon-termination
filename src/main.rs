@@ -51,7 +51,7 @@ fn handle_reports(mut req: Request) -> Result<(), Error> {
     // Parse the beacon reports from the request JSON body using serde_json.
     // If successful, bind the reports to the `reports` variable,
     // optionally transform and typecheck the payload, and log.
-    let reports = req.take_body_json::<Vec<Report<ReportBody>>>().unwrap();
+    let reports = req.take_body_json::<Vec<Report<ReportBody>>>()?;
 
     // Extract information about the client from the downstream request,
     // such as the User-Agent and IP address.
