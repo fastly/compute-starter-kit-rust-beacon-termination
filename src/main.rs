@@ -1,7 +1,4 @@
-//! Compute@Edge starter kit for beacon termination
-//!
-//! A Compute@Edge service which exposes a HTTP reporting endpoint for beacon termination.
-
+//! Compute@Edge starter kit for beacon termination.
 mod client_data;
 mod example_core_web_vital;
 mod example_csp_violation;
@@ -13,7 +10,7 @@ use crate::report::Report;
 use chrono::Utc;
 use fastly::http::{header, Method, StatusCode};
 use fastly::log::Endpoint;
-use fastly::{downstream_client_ip_addr, Body, Error, Request, Response, ResponseExt};
+use fastly::{Error, Request, Response};
 use serde::{Deserialize, Serialize};
 
 // This line allows any valid JSON value in the report body.
@@ -29,21 +26,19 @@ use serde_json::value::Value as ReportBody;
 /// and passes it to any matching request handlers before returning a `Response`
 /// back downstream.
 #[fastly::main]
-fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
+fn main(req: Request) -> Result<Response, Error> {
     // Pattern match on the request method and path.
-    match (req.method(), req.uri().path()) {
-        // If a CORS preflight OPTIONS request return a 204 no content.
-        (&Method::OPTIONS, "/report") => generate_no_content_response(),
-        // If a POST request pass to the `handler_reports` request handler.
+    match (req.get_method(), req.get_path()) {
+        // For a CORS preflight OPTIONS request, return an empty 204 response.
+        (&Method::OPTIONS, "/report") => Ok(generate_empty_204_response()),
+        // Pass a POST request to the `handler_reports` request handler.
         (&Method::POST, "/report") => {
-            let _ = handle_reports(req);
-            // Return an empty 204 No Content response to the downstream client.
-            generate_no_content_response()
+            let _ = handle_reports(req)?;
+            // Return an empty 204 response to the downstream client.
+            Ok(generate_empty_204_response())
         }
-        // For all other requests return a 404 not found.
-        _ => Ok(Response::builder()
-            .status(StatusCode::NOT_FOUND)
-            .body(Body::from("Not found"))?),
+        // For all other requests return a 404.
+        _ => Ok(Response::from_status(StatusCode::NOT_FOUND).with_body_str("Not found\n")),
     }
 }
 
@@ -52,22 +47,16 @@ fn main(req: Request<Body>) -> Result<Response<Body>, Error> {
 /// It attempts to extract the beacon reports from the POST request body and maps
 /// over each report adding additional information before emitting a log line
 /// to the `reports` logging endpoint if valid.
-fn handle_reports(req: Request<Body>) -> Result<(), Error> {
-    let (parts, body) = req.into_parts();
-
+fn handle_reports(mut req: Request) -> Result<(), Error> {
     // Parse the beacon reports from the request JSON body using serde_json.
     // If successful, bind the reports to the `reports` variable,
     // optionally transform and typecheck the payload, and log.
-    let reports = serde_json::from_reader::<Body, Vec<Report<ReportBody>>>(body)?;
+    let reports = req.take_body_json::<Vec<Report<ReportBody>>>()?;
 
     // Extract information about the client from the downstream request,
     // such as the User-Agent and IP address.
-    let client_user_agent = parts
-        .headers
-        .get(header::USER_AGENT)
-        .and_then(|header| header.to_str().ok())
-        .unwrap_or("");
-    let client_ip = downstream_client_ip_addr().expect("should have client IP");
+    let client_user_agent = req.get_header_str(header::USER_AGENT).unwrap_or("");
+    let client_ip = req.get_client_ip_addr().expect("should have client IP");
 
     // Construct a new `ClientData` structure from the IP and User Agent.
     let client_data = ClientData::new(client_ip, client_user_agent)?;
@@ -131,17 +120,14 @@ impl LogLine {
 /// Generates a response with a 204 status code, ensures the response is
 /// non-cacheable via cache-control header directives and adds appropriate CORS
 /// headers required for the beacon preflight request.
-pub fn generate_no_content_response() -> Result<Response<Body>, Error> {
-    Ok(Response::builder()
-        .status(StatusCode::NO_CONTENT)
-        .header(header::CONTENT_TYPE, "application/json")
-        .header(
+pub fn generate_empty_204_response() -> Response {
+    Response::from_status(StatusCode::NO_CONTENT)
+        .with_header(
             header::CACHE_CONTROL,
             "no-cache, no-store, max-age=0, must-revalidate",
         )
-        .header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-        .header(header::ACCESS_CONTROL_ALLOW_HEADERS, header::CONTENT_TYPE)
-        .header(header::ACCESS_CONTROL_ALLOW_METHODS, "POST, OPTIONS")
-        .header(header::CONNECTION, "keep-alive")
-        .body(Body::new())?)
+        .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+        .with_header(header::ACCESS_CONTROL_ALLOW_HEADERS, header::CONTENT_TYPE)
+        .with_header(header::ACCESS_CONTROL_ALLOW_METHODS, "POST, OPTIONS")
+        .with_header(header::CONNECTION, "keep-alive")
 }

@@ -1,4 +1,3 @@
-//! CSP violation report example.
 use serde::{Deserialize, Serialize};
 
 /// `ReportBody` models the body of a CSP report object.

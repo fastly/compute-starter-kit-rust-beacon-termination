@@ -1,4 +1,3 @@
-//! Generic JSON report example.
 use serde::{Deserialize, Serialize};
 
 /// `Report` models a beacon payload.

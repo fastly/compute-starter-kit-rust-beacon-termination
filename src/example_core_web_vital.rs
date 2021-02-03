@@ -1,4 +1,3 @@
-//! Core Web Vital report example.
 use serde::{Deserialize, Serialize};
 use serde_json::value::Value;
 
