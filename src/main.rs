@@ -122,7 +122,6 @@ impl LogLine {
 /// headers required for the beacon preflight request.
 pub fn generate_empty_204_response() -> Response {
     Response::from_status(StatusCode::NO_CONTENT)
-        .with_header(header::CONTENT_TYPE, "application/json")
         .with_header(
             header::CACHE_CONTROL,
             "no-cache, no-store, max-age=0, must-revalidate",
