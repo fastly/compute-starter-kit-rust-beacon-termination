@@ -3,6 +3,3 @@ name = "Beacon termination"
 description = "Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure."
 authors = ["<oss@fastly.com>"]
 language = "rust"
-
-[requires]
-log_endpoints = ["reports"]
