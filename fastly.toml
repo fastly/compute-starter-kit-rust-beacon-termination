@@ -1,4 +1,4 @@
-manifest_version = 1
+manifest_version = 2
 name = "Beacon termination"
 description = "Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure."
 authors = ["<oss@fastly.com>"]
