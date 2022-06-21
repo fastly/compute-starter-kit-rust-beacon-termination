@@ -26,17 +26,17 @@ This starter kit allows an individual report to be any valid JSON value.
 For optional type-checking, it also includes the data structures for some common report payloads. These structures can be imported from modules following the `example_...` naming convention:
 
 - CSP Violations
-  ```
+  ```plain
   mod example_csp_violation;
   use crate::example_csp_violation::ReportBody;
   ```
 - Network Errors
-  ```
+  ```plain
   mod example_network_error_log;
   use crate::example_network_error_log::ReportBody;
   ```
 - Core Web Vitals
-  ```
+  ```plain
   mod example_core_web_vital;
   use crate::example_core_web_vital::ReportBody;
   ```
