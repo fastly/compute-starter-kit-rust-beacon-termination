@@ -1,4 +1,4 @@
-# Compute@Edge starter kit for beacon termination
+# Beacon Termination Starter Kit for Rust
 
 Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure.
 
