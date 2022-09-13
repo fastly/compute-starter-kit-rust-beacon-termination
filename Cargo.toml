@@ -8,7 +8,7 @@ edition = "2018"
 debug = true
 
 [dependencies]
-chrono = "^0.4.20"
+chrono = { version = "^0.4.20", default-features = false, features = ["clock"] }
 fastly = "^0.8.0"
 ipnet = "^2.3.0"
 serde = { version = "^1.0.123", features = ["derive"] }
