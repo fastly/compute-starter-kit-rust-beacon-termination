@@ -38,7 +38,7 @@ fn main(req: Request) -> Result<Response, Error> {
             Ok(generate_empty_204_response())
         }
         // For all other requests return a 404.
-        _ => Ok(Response::from_status(StatusCode::NOT_FOUND).with_body_str("Not found\n")),
+        _ => Ok(Response::from_status(StatusCode::NOT_FOUND).with_body_text_plain("Not found\n")),
     }
 }
 
