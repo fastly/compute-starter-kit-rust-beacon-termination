@@ -75,17 +75,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "compute-starter-kit-rust"
-version = "0.2.0"
-dependencies = [
- "chrono",
- "fastly",
- "ipnet",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "core-foundation-sys"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -130,6 +119,17 @@ dependencies = [
  "thiserror",
  "time",
  "url",
+]
+
+[[package]]
+name = "fastly-compute-project"
+version = "0.2.0"
+dependencies = [
+ "chrono",
+ "fastly",
+ "ipnet",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
