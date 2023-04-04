@@ -40,15 +40,6 @@ jobs:
       shell: bash
     - name: Install audit
       run: cargo install cargo-audit
-      shell: bash 
-    - name: Prepare to store metadata
-      run: mkdir -p src/well-known
-      shell: bash
-    - name: Store JWKS metadata
-      run: echo "${{ secrets.JWKS_JSON }}" > src/well-known/jwks.json
-      shell: bash    
-    - name: Store OIDC metadata
-      run: echo "${{ secrets.OIDC_METADATA_JSON }}" > src/well-known/openid-configuration.json
       shell: bash
     - name: Check binaries and format
       run: RUSTFLAGS="--deny warnings" cargo check --bins --target wasm32-wasi && cargo fmt -- --check
