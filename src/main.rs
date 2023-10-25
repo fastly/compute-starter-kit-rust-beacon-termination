@@ -1,4 +1,4 @@
-//! Compute@Edge starter kit for beacon termination.
+//! Compute starter kit for beacon termination.
 mod client_data;
 mod example_core_web_vital;
 mod example_csp_violation;

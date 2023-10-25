@@ -2,7 +2,7 @@
 
 Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure.
 
-**For more details about this and other starter kits for Compute@Edge, see the [Fastly Developer Hub](https://developer.fastly.com/solutions/starters/)**.
+**For more details about this and other starter kits for Fastly Compute, see the [Fastly Developer Hub](https://developer.fastly.com/solutions/starters/)**.
 
 ## What are beacons?
 
