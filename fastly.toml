@@ -3,3 +3,6 @@ description = "Capture beacon data from the browser, divert beacon request paylo
 language = "rust"
 manifest_version = 2
 name = "Beacon termination"
+
+[scripts]
+  build = "cargo build --bin fastly-compute-project --release --target wasm32-wasi --color always"
