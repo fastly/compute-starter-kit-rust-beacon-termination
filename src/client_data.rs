@@ -1,5 +1,5 @@
+use fastly::device_detection;
 use fastly::error::anyhow;
-use fastly::experimental::uap_parse;
 use fastly::geo::{geo_lookup, Continent};
 use fastly::Error;
 use serde::{Deserialize, Serialize};
@@ -35,9 +35,9 @@ impl ClientData {
             client_ip: truncated_ip,
             client_user_agent: UserAgent::from_str(client_user_agent)?.to_string(), // Parse the User-Agent string.
             client_asn: geo.as_number(),
-            client_asname: geo.as_name().to_string(),
-            client_city: geo.city().to_string(),
-            client_country_code: geo.country_code().to_string(),
+            client_asname: geo.as_name().into(),
+            client_city: geo.city().into(),
+            client_country_code: geo.country_code().into(),
             client_latitude: geo.latitude(),
             client_longitude: geo.longitude(),
             client_continent_code: geo.continent(),
@@ -75,32 +75,28 @@ pub fn truncate_ip_to_prefix(ip: IpAddr) -> Result<String, Error> {
 /// [from-str]: https://doc.rust-lang.org/std/str/trait.FromStr.html
 #[derive(Clone)]
 pub struct UserAgent {
-    family: String,
-    major: String,
-    minor: String,
-    patch: String,
+    device_name: String,
+    brand: String,
+    model: String,
 }
 
 impl FromStr for UserAgent {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<UserAgent, Error> {
-        let (family, major, minor, patch) = uap_parse(s)?;
-        Ok(UserAgent {
-            family,
-            major: major.unwrap_or_default(),
-            minor: minor.unwrap_or_default(),
-            patch: patch.unwrap_or_default(),
-        })
+        match device_detection::lookup(s) {
+            Some(device_info) => Ok(UserAgent {
+                device_name: device_info.device_name().unwrap_or_default().into(),
+                brand: device_info.brand().unwrap_or_default().into(),
+                model: device_info.model().unwrap_or_default().into(),
+            }),
+            None => Err(anyhow!("device_detection lookup failed")),
+        }
     }
 }
 
 impl fmt::Display for UserAgent {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{} {}.{}.{}",
-            self.family, self.major, self.minor, self.patch
-        )
+        write!(f, "{} {} {}", self.device_name, self.brand, self.model)
     }
 }
