@@ -33,7 +33,7 @@ fn main(req: Request) -> Result<Response, Error> {
         (&Method::OPTIONS, "/report") => Ok(generate_empty_204_response()),
         // Pass a POST request to the `handler_reports` request handler.
         (&Method::POST, "/report") => {
-            let _ = handle_reports(req)?;
+            handle_reports(req)?;
             // Return an empty 204 response to the downstream client.
             Ok(generate_empty_204_response())
         }

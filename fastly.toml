@@ -1,8 +1,8 @@
-authors = ["<oss@fastly.com>"]
-description = "Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure."
-language = "rust"
-manifest_version = 2
 name = "Beacon termination"
+description = "Capture beacon data from the browser, divert beacon request payloads to a log endpoint, and avoid putting load on your own infrastructure."
+authors = ["<devrel@fastly.com>"]
+language = "rust"
+manifest_version = 3
 
 [scripts]
-  build = "cargo build --bin fastly-compute-project --release --target wasm32-wasi --color always"
+  build = "cargo build --profile release"
