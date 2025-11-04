@@ -4,6 +4,7 @@ use serde_json::value::Value;
 /// `ReportBody` models the body a Core Web Vital metric.
 ///
 /// [specification]: https://github.com/GoogleChrome/web-vitals#metric
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ReportBody {
     pub name: String,

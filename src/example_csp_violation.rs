@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 /// `ReportBody` models the body of a CSP report object.
 ///
 /// [specification]: https://www.w3.org/TR/CSP2/#generate-a-violation-report-object
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ReportBody {
     #[serde(rename = "csp-report")]
@@ -12,6 +13,7 @@ pub struct ReportBody {
 /// `CSPViolation` models the body a CSP violation.
 ///
 /// [specification]: https://www.w3.org/TR/CSP2/#violation-reports
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Clone)]
 pub struct CSPViolation {
     #[serde(rename = "blocked-uri")]

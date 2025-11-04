@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 /// for detailed information on the report structure.
 ///
 /// [specification]: https://www.w3.org/TR/network-error-logging
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ReportBody {
     #[serde(rename = "type")]
